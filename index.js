@@ -4,8 +4,10 @@
 import express from 'express'
 //      per abilitare l'import dei moduli devi aggiungere "type": "module", nel package.json
 import usersRoutes from './routes/users.js'
+import authRoutes from './routes/auth.js'
 import { initModels } from './models/index.js'
 import cors from 'cors'
+import { authenticateToken } from './middlewares/auth.js'
 const app = express()
 const PORT = 3008
 
@@ -26,7 +28,8 @@ app.use(express.json())
 initModels().catch((err) => console.error(err))
 
 // Endpoint
-app.use('/users', usersRoutes)
+app.use('/users', authenticateToken, usersRoutes)
+app.use('/auth', authRoutes)
 app.get('/', (req, res) => res.send('Benventuto nell home'))
 
 app.listen(PORT, () => {
